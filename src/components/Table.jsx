@@ -1,42 +1,68 @@
 import { Card } from "./Card";
+import '../style/table.css'
 
-const number = ["2", "3", "4", "5", "6", "7", "8", "9", "J", "Q", "K", "A"];
-const suit = ["C", "D", "H", "S"];
-const urlPrefix = "https://deckofcardsapi.com/static/img/";
-const urlSuffix = ".png";
+function shuffle(arr) {
+  let array = arr.slice();
+  let index = array.length;
 
-const deck = [];
-const deckSize = 20;
-
-function generateDeck() {
-  while(true){
-    if(deck.length === deckSize){
-        return;
-    }
-    const randNum = Math.floor(Math.random() * 100) % 12;
-    const randSuit = Math.floor(Math.random() * 100) % 4;
-    const randCard = number[randNum] + suit[randSuit];
-    if(!deck.includes(randCard)){
-        deck.push(randCard);
-    }
+  while (index != 0) {
+    let randomIndex = Math.floor(Math.random() * index);
+    index--;
+    [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
   }
+  return array;
 }
 
-function printDeck(){
-    deck.map(card => console.log(imageURL(card)));
-}
-
-function imageURL(card) {
-  const url = urlPrefix + card + urlSuffix;
-  return url;
-}
-
-function Table() {
-    generateDeck();
-    printDeck();
-    return deck.map((card, index) => {
-        return <Card key={index} url={imageURL(card)}/>
-    })
+function Table({
+  deck,
+  setDeck,
+  selectedCards,
+  setSelectedCards,
+  currentScore,
+  setCurrentScore,
+  highScore,
+  setHighScore,
+  isGameOver,
+  setIsGameOver,
+}) {
+  const cards = deck.map((card, index) => {
+    let arr = selectedCards.slice();
+    return (
+      <Card
+        key={index}
+        value={card}
+        handleClick={() => {
+            if(isGameOver){
+                return;
+            }
+          if (arr.includes(card)) {
+            setIsGameOver(true);
+            console.log("GAME OVER!");
+            if (currentScore > highScore) {
+              setHighScore(currentScore);
+              localStorage.setItem("memory-card-game-high-score", currentScore);
+            }
+          } else {
+            arr.push(card);
+            setSelectedCards(arr);
+            let newDeck = shuffle(deck);
+            setDeck(newDeck);
+            setCurrentScore(currentScore + 1);
+          }
+        }}
+      />
+    );
+  });
+  return (
+    <>
+      {cards}
+      {isGameOver && (
+        <div>
+          <span id="game-over-text">GAME OVER</span>
+        </div>
+      )}
+    </>
+  );
 }
 
 export { Table };
