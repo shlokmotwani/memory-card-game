@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import '../style/table.css'
+import "../style/table.css";
 
 function shuffle(arr) {
   let array = arr.slice();
@@ -32,12 +32,11 @@ function Table({
         key={index}
         value={card}
         handleClick={() => {
-            if(isGameOver){
-                return;
-            }
+          if (isGameOver) {
+            return;
+          }
           if (arr.includes(card)) {
             setIsGameOver(true);
-            console.log("GAME OVER!");
             if (currentScore > highScore) {
               setHighScore(currentScore);
               localStorage.setItem("memory-card-game-high-score", currentScore);
@@ -56,11 +55,16 @@ function Table({
   return (
     <>
       {cards}
-      {isGameOver && (
-        <div>
-          <span id="game-over-text">GAME OVER</span>
-        </div>
-      )}
+      <div>
+        <span
+          id="game-over-text"
+          style={
+            isGameOver ? { visibility: "visible" } : { visibility: "hidden" }
+          }
+        >
+          GAME OVER
+        </span>
+      </div>
     </>
   );
 }
